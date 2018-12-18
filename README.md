@@ -12,4 +12,4 @@ Cryptoline will then prompt you for the cipher, and attempt to decode it automat
 	- Mirrored words
 	- Rot13
 
-Developed b:y Lucas Miller
+Developed by Lucas Miller
