@@ -20,7 +20,7 @@ def is_word(word: str):
 
 
 def load_words():
-    """Loads the words document intop a set"""
+    """Loads the words document into a set"""
     with open('cryptoline_modules/words.txt') as word_file:
         valid_words = set(word_file.read().lower().split())
 
