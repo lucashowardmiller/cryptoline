@@ -2,15 +2,26 @@ from cryptoline_modules import decode_cipher as dc
 
 
 def main():
-    print("Welcome to cryptoline")
-    print("Enter a cryptogram to decode")
+    draw_logo()
+    print("Enter a cryptogram to decode:", end=" ")
 
-    print("CryptoLine> ", end=" ")
     entry = input()
 
     print(dc.decode_layer(entry))
 
-    # str(detect_english.is_word(input()))
+
+
+def draw_logo():
+    logo = """
+                             __         .__  .__               
+  ___________ ___.__._______/  |_  ____ |  | |__| ____   ____  
+_/ ___\_  __ <   |  |\____ \   __\/  _ \|  | |  |/    \_/ __ \ 
+\  \___|  | \/\___  ||  |_> >  | (  <_> )  |_|  |   |  \  ___/ 
+ \___  >__|   / ____||   __/|__|  \____/|____/__|___|  /\___  >
+     \/       \/     |__|                            \/     \/ 
+    """
+
+    print(logo)
 
 
 if __name__ == '__main__':
