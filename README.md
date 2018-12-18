@@ -4,9 +4,9 @@
 ### Usage
 	python3.7 cryptoline.py
 
-Cryptoline will then prompt you for the cipher, and attempt to decode it automatically. Presently, it does not support decoding nested ciphers.
+Cryptoline will then prompt you for the cipher, and attempt to decode it automatically.
 ### Features
-
+- Can decrypt nested ciphers (default depth of 3)
 - Can decrypt and detect
 	- Base 85/64/32/16
 	- Mirrored words
