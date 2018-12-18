@@ -6,14 +6,15 @@ def main():
     print("Enter a cryptogram to decode:", end=" ")
 
     entry = input()
-
+    list = [entry]
+    dc.decode_multilayer(list, 3)
+    print("Possible results:")
     print(dc.decode_layer(entry))
 
 
 
 def draw_logo():
-    logo = """
-                             __         .__  .__               
+    logo =  """                             __         .__  .__               
   ___________ ___.__._______/  |_  ____ |  | |__| ____   ____  
 _/ ___\_  __ <   |  |\____ \   __\/  _ \|  | |  |/    \_/ __ \ 
 \  \___|  | \/\___  ||  |_> >  | (  <_> )  |_|  |   |  \  ___/ 
