@@ -7,9 +7,9 @@ def main():
 
     entry = input()
     list = [entry]
-    dc.decode_multilayer(list, 3)
     print("Possible results:")
-    print(dc.decode_layer(entry))
+    dc.decode_multilayer(list, 3)
+
 
 
 
