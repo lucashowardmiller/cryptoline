@@ -5,9 +5,11 @@ import base64
 # verifying english
 from cryptoline_modules import detect_english
 
-# this prints stuff to console instead of doing it "properly", but like man I tried
-def decode_multilayer(cipher_list: "string list", max_layers: int):
+
+# this prints stuff to console
+def decode_multilayer(cipher_list: "List[str]", max_layers: int):
     """Used to solve nested layers"""
+
     results = []
     # I really don't know a better way to do this
     for cipher in cipher_list:
@@ -15,7 +17,9 @@ def decode_multilayer(cipher_list: "string list", max_layers: int):
         results.append(decode_base64(cipher))
         results.append(decode_base32(cipher))
         results.append(decode_base16(cipher))
-        results.append(decode_mirror(cipher))
+        results.append(decode_morse(cipher))
+        # turned of due to behaving badly
+        # results.append(decode_mirror(cipher))
 
     # removes blank strings
     results = list(filter(None, results))
@@ -23,6 +27,7 @@ def decode_multilayer(cipher_list: "string list", max_layers: int):
     for possible_match in results:
         if detect_english.has_english(possible_match):
             print(possible_match)
+            # results.remove(possible_match)
 
     if max_layers > 0:
         decode_multilayer(results, max_layers - 1)
@@ -45,6 +50,7 @@ def decode_layer(cipher: str):
     if is_rot13(cipher):
         return decode_rot13(cipher)
 
+
 def decode_rot13(cipher: str):
     """Used to decode rot13"""
     return codecs.decode(cipher, 'rot_13')
@@ -64,7 +70,7 @@ def decode_base64(cipher: str):
 
 
 def is_base64(cipher: str):
-    """Used to solve a layer of base64"""
+    """Used to detect base64"""
     return detect_english.has_english(decode_base64(cipher))
 
 
@@ -77,7 +83,7 @@ def decode_base32(cipher: str):
 
 
 def is_base32(cipher: str):
-    """Used to solve a layer of base32"""
+    """Used to detect base32"""
     return detect_english.has_english(decode_base32(cipher))
 
 
@@ -90,11 +96,12 @@ def decode_base16(cipher: str):
 
 
 def is_base16(cipher: str):
-    """Used to solve a layer of binary"""
+    """Used to detect base16"""
     return detect_english.has_english(decode_base16(cipher))
 
 
 def decode_base85(cipher: str):
+    """Used to solve a layer of base85"""
     try:
         return base64.a85decode(cipher).decode("utf-8")
     except:
@@ -102,10 +109,51 @@ def decode_base85(cipher: str):
 
 
 def is_base85(cipher: str):
+    """Used to detect base85"""
     return detect_english.has_english(decode_base85(cipher))
 
 
+def decode_mirror(cipher: str):
+    """Flips the ciphertext. eg. tac => cat """
+    return cipher[::-1]
+
+
+def is_mirror(cipher: str):
+    """used to detect mirrored cipher text"""
+    return detect_english.has_english(decode_mirror(cipher))
+
+
+def decode_morse(cipher: str):
+    """Can decode well behaved morse"""
+    result = ""
+    morse_dict = {'.-': 'A', '-...': 'B', '-.-.': 'C',
+                       '-..': 'D', '.': 'E', '..-.': 'F', '--.': 'G',
+                       '....': 'H', '..': 'I', '.---': 'J', '-.-': 'K',
+                       '.-..': 'L', '--': 'M', '-.': 'N', '---': 'O',
+                       '.--.': 'P', '--.-': 'Q', '.-.': 'R', '...': 'S',
+                       '-': 'T', '..-': 'U', '...-': 'V', '.--': 'W',
+                       '-..-': 'X', '-.--': 'Y', '--..': 'Z', '.----': '1',
+                       '..---': '2', '...--': '3', '....-': '4', '.....': '5',
+                       '-....': '6', '--...': '7', '---..': '8', '----.': '9',
+                       '-----': '0', '--..--': ', ', '.-.-.-': '.', '..--..': '?',
+                       '-..-.': '/', '-....-': '-', '-.--.': '(', '-.--.-': ')'}
+
+    try:
+        for i in cipher.split(" "):
+            result = result + morse_dict[i]
+    except:
+        return result
+
+    return result
+
+
+def is_morse(cipher: str):
+    """Can detect well behaved morse"""
+    return detect_english.has_english(decode_morse(cipher))
+
+
 def decode_binary(cipher: str):
+    """Used to solve a layer of binary"""
     # TODO binary machine broke
     try:
 
@@ -116,22 +164,23 @@ def decode_binary(cipher: str):
 
 
 def is_binary(cipher: str):
-    """Used to solve a layer of binary"""
-    # TODO see decode_binary() should function once written
+    """Used to detect binary"""
+    # TODO see decode_binary(), should function once written
     return detect_english.has_english(decode_binary(cipher))
 
 
-def decode_mirror(cipher: str):
-    """Flips the ciphertext. eg. tac => cat """
-    return cipher[::-1]
+def decode_number_as_phone(cipher: str):
+    """Decodes phone number encoding. eg. 222-2-8 => cat"""
+
+    print("ring rang")
 
 
-def is_mirror(cipher: str):
-    return detect_english.has_english(cipher)
+def decode_number_as_letter(cipher: str):
+    """Decodes numbers as letters", eg. 1 2 3 => A B C"""
+    print("leeter de2code")
 
 
+def decode_ascii_as_letter(cipher: str):
+    print("ascii decode")
 
 
-
-def decode_morse():
-    print("morsy mo")
