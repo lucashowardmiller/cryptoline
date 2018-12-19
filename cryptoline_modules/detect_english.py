@@ -1,9 +1,10 @@
 """Used to classify if certain strings are words or contain words"""
+# used to eliminate non whitespace separators
 import re
 
 
 def has_english(string: str):
-    """Detects if a string (seperated by spaces) has a word"""
+    """Detects if a string (separated by anything) has an english word"""
 
     not_letter = re.compile('[^0-9a-zA-Z]+')
     string = not_letter.sub(' ', string)
