@@ -6,31 +6,35 @@ import base64
 from cryptoline_modules import detect_english
 
 
-# this prints stuff to console
-def decode_multilayer(cipher_list: "List[str]", max_layers: int):
-    """Used to solve nested layers"""
+def decode_multilayer(cipher_list: list[tuple(str, str)], max_layers: int, printed_results = []):
+    # cipher_list is List[(ciphertext, origination)]
+    # max_layers is the number of times the method can call itself recursively
+    # printed_results optional argument that allows for printing each answer once
+    """Used to solve nested layers of ciphers"""
 
     results = []
-    # I really don't know a better way to do this
-    for cipher in cipher_list:
-        results.append(decode_base85(cipher))
-        results.append(decode_base64(cipher))
-        results.append(decode_base32(cipher))
-        results.append(decode_base16(cipher))
-        results.append(decode_morse(cipher))
-        # turned of due to behaving badly
-        # results.append(decode_mirror(cipher))
+    # runs each ciphertext through a decoding method, and appends the method to ciphertext[1]
+    for ciphertext in cipher_list:
+        results.append((decode_base85(ciphertext[0]), ciphertext[1] + " => Base85 Decode"))
+        results.append((decode_base64(ciphertext[0]), ciphertext[1] + " => Base64 Decode"))
+        results.append((decode_base32(ciphertext[0]), ciphertext[1] + " => Base32 Decode"))
+        results.append((decode_base16(ciphertext[0]), ciphertext[1] + " => Base16 Decode"))
+        results.append((decode_rot13(ciphertext[0]),  ciphertext[1] + " => Rot13 Decode"))
+        results.append((decode_mirror(ciphertext[0]), ciphertext[1] + " => Mirror Decode"))
+        results.append((decode_morse(ciphertext[0]),  ciphertext[1] + " => Morse Decode"))
 
     # removes blank strings
     results = list(filter(None, results))
 
+    # prints possible decoded text and the decoding methods used
     for possible_match in results:
-        if detect_english.has_english(possible_match):
-            print(possible_match)
-            # results.remove(possible_match)
+        if detect_english.has_english(possible_match[0]):
+            if possible_match[0] not in printed_results:
+                print(f'{possible_match[0]}: {possible_match[1]}')
+                printed_results.append(possible_match[0])
 
     if max_layers > 0:
-        decode_multilayer(results, max_layers - 1)
+        decode_multilayer(results, max_layers - 1, printed_results)
 
 
 def decode_layer(cipher: str):
@@ -127,16 +131,16 @@ def decode_morse(cipher: str):
     """Can decode well behaved morse"""
     result = ""
     morse_dict = {'.-': 'A', '-...': 'B', '-.-.': 'C',
-                       '-..': 'D', '.': 'E', '..-.': 'F', '--.': 'G',
-                       '....': 'H', '..': 'I', '.---': 'J', '-.-': 'K',
-                       '.-..': 'L', '--': 'M', '-.': 'N', '---': 'O',
-                       '.--.': 'P', '--.-': 'Q', '.-.': 'R', '...': 'S',
-                       '-': 'T', '..-': 'U', '...-': 'V', '.--': 'W',
-                       '-..-': 'X', '-.--': 'Y', '--..': 'Z', '.----': '1',
-                       '..---': '2', '...--': '3', '....-': '4', '.....': '5',
-                       '-....': '6', '--...': '7', '---..': '8', '----.': '9',
-                       '-----': '0', '--..--': ', ', '.-.-.-': '.', '..--..': '?',
-                       '-..-.': '/', '-....-': '-', '-.--.': '(', '-.--.-': ')'}
+                  '-..': 'D', '.': 'E', '..-.': 'F', '--.': 'G',
+                  '....': 'H', '..': 'I', '.---': 'J', '-.-': 'K',
+                  '.-..': 'L', '--': 'M', '-.': 'N', '---': 'O',
+                  '.--.': 'P', '--.-': 'Q', '.-.': 'R', '...': 'S',
+                  '-': 'T', '..-': 'U', '...-': 'V', '.--': 'W',
+                  '-..-': 'X', '-.--': 'Y', '--..': 'Z', '.----': '1',
+                  '..---': '2', '...--': '3', '....-': '4', '.....': '5',
+                  '-....': '6', '--...': '7', '---..': '8', '----.': '9',
+                  '-----': '0', '--..--': ', ', '.-.-.-': '.', '..--..': '?',
+                  '-..-.': '/', '-....-': '-', '-.--.': '(', '-.--.-': ')'}
 
     try:
         for i in cipher.split(" "):
@@ -170,7 +174,7 @@ def is_binary(cipher: str):
 
 
 def decode_number_as_phone(cipher: str):
-    """Decodes phone number encoding. eg. 222-2-8 => cat"""
+    """Decodes phone number encoding, eg. 222-2-8 => cat"""
 
     print("ring rang")
 
@@ -183,4 +187,14 @@ def decode_number_as_letter(cipher: str):
 def decode_ascii_as_letter(cipher: str):
     print("ascii decode")
 
+
+def decode_ceaser(cipher: str):
+    print("ceaser")
+
+
+class Letter(object):
+    """Used for shifting the values of letters for custom ceaser shifts"""
+
+    def shift(self, value: int):
+        """Shifts the value of the letter by the specified value"""
 
