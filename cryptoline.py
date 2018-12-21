@@ -1,16 +1,16 @@
 from cryptoline_modules import decode_cipher as dc
+from cryptoline_modules import detect_english as de
 
 
 def main():
     draw_logo()
+
     print("Enter a cryptogram to decode:", end=" ")
-
     entry = input()
-    list = [entry]
+
+    entry_list = [(entry, "Provided text")]
     print("Possible results:")
-    dc.decode_multilayer(list, 3)
-
-
+    dc.decode_multilayer(entry_list, 3)
 
 
 def draw_logo():
