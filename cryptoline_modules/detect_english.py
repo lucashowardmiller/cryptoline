@@ -14,11 +14,15 @@ def load_words():
 def has_english(string: str):
     """True if a string (separated by anything) has an english word"""
 
+    WORD_SET = load_words()
+
+    # Replaces all non letter characters with spaces
     not_letter = re.compile('[^0-9a-zA-Z]+')
     string = not_letter.sub(' ', string)
 
+    # Determines if the current section of the string occurs in the word text file
     for item in string.split(" "):
-        if item in load_words():
+        if item in WORD_SET:
             return True
     return False
 
