@@ -1,9 +1,12 @@
 from cryptoline_modules import decode_cipher as dc
-from cryptoline_modules import detect_english as de
+from cryptoline_modules import detect_english
 
 
 def main():
+
     draw_logo()
+
+    detect_english.verify_db_file()
 
     print("Enter a cryptogram to decode:", end=" ")
     entry = input()
