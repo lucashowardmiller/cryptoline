@@ -1,12 +1,16 @@
+# used for matching
+import re
 # rot13
 import codecs
 # base64
 import base64
+# type hints
+from typing import List, Tuple
 # verifying english
 from cryptoline_modules import detect_english
 
 
-def decode_multilayer(cipher_list: list[tuple(str, str)], max_layers: int, printed_results = []):
+def decode_multilayer(cipher_list: List[Tuple[str, str]], max_layers: int, printed_results = []):
     # cipher_list is List[(ciphertext, origination)]
     # max_layers is the number of times the method can call itself recursively
     # printed_results optional argument that allows for printing each answer once
@@ -22,16 +26,17 @@ def decode_multilayer(cipher_list: list[tuple(str, str)], max_layers: int, print
         results.append((decode_rot13(ciphertext[0]),  ciphertext[1] + " => Rot13 Decode"))
         results.append((decode_mirror(ciphertext[0]), ciphertext[1] + " => Mirror Decode"))
         results.append((decode_morse(ciphertext[0]),  ciphertext[1] + " => Morse Decode"))
+        results.append((decode_number_as_phone(ciphertext[0]),  ciphertext[1] + " => Phone Decode"))
+        results.append((decode_number_as_letter(ciphertext[0]),  ciphertext[1] + " => Number Decode"))
 
     # removes blank strings
     results = list(filter(None, results))
 
     # prints possible decoded text and the decoding methods used
     for possible_match in results:
-        if detect_english.has_english(possible_match[0]):
-            if possible_match[0] not in printed_results:
-                print(f'{possible_match[0]}: {possible_match[1]}')
-                printed_results.append(possible_match[0])
+        if detect_english.has_english(possible_match[0]) and possible_match[0] not in printed_results:
+            print(f'{possible_match[0]}: {possible_match[1]}')
+            printed_results.append(possible_match[0])
 
     if max_layers > 0:
         decode_multilayer(results, max_layers - 1, printed_results)
@@ -175,13 +180,55 @@ def is_binary(cipher: str):
 
 def decode_number_as_phone(cipher: str):
     """Decodes phone number encoding, eg. 222-2-8 => cat"""
+    # todo make werk
 
-    print("ring rang")
+    string_result = ""
+
+    # uses the number pad value to lookup the letter
+
+    phone_dict = {'222': 'c', '22': 'b', '2': 'a',
+                  '333': 'f', '33': 'e', '3': 'd',
+                  '444': 'g', '44': 'h', '4': 'i',
+                  '555': 'l', '55': 'k', '5': 'j',
+                  '666': 'o', '66': 'n', '6': 'm',
+                  '7777': 's', '777': 'r', '77': 'q', '7': 'p',
+                  '888': 'v', '88': 'u', '8': 't',
+                  '9999': 'z', '999': 'y', '99': 'x', '9': 'w'
+                  }
+
+    not_letter = re.compile('[-._|]')
+    replaced = re.sub(not_letter, ' ', cipher)
+
+    for item in replaced.split(" "):
+        if item in phone_dict:
+            string_result = string_result + phone_dict[item]
+
+    return string_result
 
 
 def decode_number_as_letter(cipher: str):
     """Decodes numbers as letters", eg. 1 2 3 => A B C"""
-    print("leeter de2code")
+    string_result = ""
+
+    letter_dict = {'1': 'a', '2': 'b', '3': 'c',
+                   '4': 'd', '5': 'e', '6': 'f',
+                   '7': 'g', '8': 'h', '9': 'i',
+                   '10': 'j', '11': 'k', '12': 'l',
+                   '13': 'm', '14': 'n', '15': 'o',
+                   '16': 'p', '17': 'q', '18': 'r',
+                   '19': 's', '20': 't', '21': 'u',
+                   '22': 'v', '23': 'w', '24': 'x',
+                   '25': 'y', '26': 'z',
+                   }
+
+    not_letter = re.compile('[-._|]')
+    replaced = re.sub(not_letter, ' ', cipher)
+
+    for item in replaced.split(" "):
+        if item in letter_dict:
+            string_result = string_result + letter_dict[item]
+
+    return string_result
 
 
 def decode_ascii_as_letter(cipher: str):
